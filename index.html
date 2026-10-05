@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#f8fbfd">
+  <title>Universitas Sembagi Arutala</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Telegram Mini App -->
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+
+<body>
+  <div class="app">
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="cloud cloud-one"></div>
+      <div class="cloud cloud-two"></div>
+      <div class="cloud cloud-three"></div>
+
+      <div class="moon">
+        <span class="moon-dot dot-one"></span>
+        <span class="moon-dot dot-two"></span>
+        <span class="moon-dot dot-three"></span>
+      </div>
+
+      <span class="star star-one">✦</span>
+      <span class="star star-two">✦</span>
+      <span class="star star-three">✦</span>
+      <span class="star star-four">✦</span>
+
+      <div class="brand">
+        <div class="logo">UA</div>
+        <div class="university-name">
+          UNIVERSITAS<br>
+          SEMBAGI ARUTALA
+        </div>
+      </div>
+
+      <div class="hero-copy">
+        <h1 id="greeting">Good morning, Student!</h1>
+        <p id="greetingSub">Have a great day at university ✦</p>
+      </div>
+
+      <!-- Cute university illustration -->
+      <div class="campus">
+        <div class="flag-pole"></div>
+        <div class="flag"></div>
+
+        <div class="main-building">
+          <div class="main-roof"></div>
+          <div class="side-window window-left"></div>
+          <div class="side-window window-right"></div>
+          <div class="building-columns">
+            <span></span><span></span><span></span><span></span><span></span>
+          </div>
+        </div>
+
+        <div class="center-building">
+          <div class="center-roof"></div>
+          <div class="center-window"></div>
+          <div class="door"></div>
+        </div>
+
+        <div class="tree tree-left">
+          <div class="tree-top"></div>
+          <div class="tree-trunk"></div>
+        </div>
+
+        <div class="tree tree-right">
+          <div class="tree-top"></div>
+          <div class="tree-trunk"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROFILE -->
+    <section class="profile-card">
+      <div class="avatar" id="avatar">
+        <span id="avatarFallback">👩🏻‍🎓</span>
+      </div>
+
+      <div class="profile-info">
+        <h2 id="userName">Nama sesuai user Telegram</h2>
+        <p id="userMajor">Jurusan</p>
+        <p>
+          <span id="userNim">NIM</span>
+          <span class="generation">Generasi 1</span>
+        </p>
+      </div>
+    </section>
+
+    <main class="content">
+
+      <!-- UPCOMING CLASS -->
+      <section class="section">
+        <h2 class="section-title">Upcoming class</h2>
+
+        <div class="class-card" id="classCard">
+          <button class="class-main" id="classToggle" type="button">
+            <span class="arrow" id="arrow">⌄</span>
+            <span class="class-title">Kecerdasan Artificial</span>
+            <span class="class-date">
+              Senin, 5 Oktober 2026, 19.00 — Miss Isabelle
+            </span>
+          </button>
+
+          <div class="attendance-row" id="attendanceRow">
+            <span class="attendance-label">Attendance open at</span>
+            <button class="confirm-button" id="confirmBtn" type="button">
+              Confirm
+            </button>
+          </div>
+        </div>
+
+        <button class="absence-card" id="absenceBtn" type="button">
+          <span>Request absence</span>
+          <span class="absence-arrow">›</span>
+        </button>
+      </section>
+
+      <!-- ASSIGNMENT -->
+      <section class="section assignment-section">
+        <h2 class="section-title">Assignment</h2>
+
+        <div class="assignment-card">
+          <div class="assignment-icon">▤</div>
+          <div class="assignment-info">
+            <strong>UI/UX Design</strong>
+            <p>Latest assignment</p>
+          </div>
+          <div class="due">
+            due 8 Oct<br>20.00
+          </div>
+        </div>
+      </section>
+
+      <!-- STATS -->
+      <section class="stats-section">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <span class="stat-label">Attendance</span>
+            <strong class="stat-number">92%</strong>
+            <div class="progress"><span style="width: 92%"></span></div>
+          </div>
+
+          <div class="stat-card">
+            <span class="stat-label">Grade</span>
+            <strong class="stat-number">80</strong>
+            <div class="progress"><span style="width: 80%"></span></div>
+          </div>
+        </div>
+      </section>
+
+      <div class="message" id="message" aria-live="polite"></div>
+    </main>
+  </div>
+
+  <!-- REQUEST ABSENCE BOTTOM SHEET -->
+  <div class="modal-backdrop" id="absenceModal" aria-hidden="true">
+    <div class="absence-sheet" role="dialog" aria-modal="true" aria-labelledby="absenceTitle">
+
+      <div class="sheet-handle"></div>
+
+      <div class="sheet-content">
+        <h2 id="absenceTitle">Request Absence</h2>
+
+        <label class="form-label" for="sessionSelect">Session</label>
+
+        <div class="session-select-wrap">
+          <button class="session-select" id="sessionSelect" type="button" aria-expanded="false">
+            <span id="selectedSession">Select a session...</span>
+            <span class="select-chevron">⌄</span>
+          </button>
+
+          <div class="session-options" id="sessionOptions">
+            <button class="session-option" type="button" data-session="Kecerdasan Artificial · 19:00">
+              <span>Kecerdasan Artificial · 19:00</span>
+              <span class="radio"></span>
+            </button>
+            <button class="session-option" type="button" data-session="UI/UX Design · 13:00">
+              <span>UI/UX Design · 13:00</span>
+              <span class="radio"></span>
+            </button>
+            <button class="session-option" type="button" data-session="Bahasa Inggris · 10:00">
+              <span>Bahasa Inggris · 10:00</span>
+              <span class="radio"></span>
+            </button>
+          </div>
+        </div>
+
+        <label class="form-label reason-label" for="absenceReason">Reason</label>
+
+        <textarea
+          id="absenceReason"
+          class="reason-input"
+          placeholder="Tell us why you will be absent..."
+          rows="5"
+        ></textarea>
+
+        <div class="sheet-actions">
+          <button class="submit-absence" id="submitAbsence" type="button">
+            Submit
+          </button>
+        </div>
+
+        <p class="form-message" id="absenceMessage"></p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // =========================================================
+    // TELEGRAM MINI APP USER
+    // =========================================================
+
+    const tg = window.Telegram?.WebApp;
+
+    if (tg) {
+      tg.ready();
+      tg.expand();
+      tg.setHeaderColor("#171717");
+      tg.setBackgroundColor("#f8fbfd");
+    }
+
+    const telegramUser = tg?.initDataUnsafe?.user || null;
+
+    function getTelegramName(user) {
+      if (!user) return "Student";
+
+      const fullName = [
+        user.first_name || "",
+        user.last_name || ""
+      ].join(" ").trim();
+
+      return fullName || user.username || "Student";
+    }
+
+    function setupTelegramProfile() {
+      const nameEl = document.getElementById("userName");
+      const avatarEl = document.getElementById("avatar");
+      const fallbackEl = document.getElementById("avatarFallback");
+
+      if (!telegramUser) {
+        // Browser preview fallback.
+        nameEl.textContent = "Nama sesuai user Telegram";
+        return;
+      }
+
+      nameEl.textContent = getTelegramName(telegramUser);
+
+      // Telegram provides photo_url when the user's profile photo is
+      // available to the Mini App.
+      if (telegramUser.photo_url) {
+        const img = document.createElement("img");
+        img.src = telegramUser.photo_url;
+        img.alt = getTelegramName(telegramUser);
+        img.className = "telegram-avatar";
+        img.onerror = () => {
+          img.remove();
+          fallbackEl.hidden = false;
+        };
+
+        fallbackEl.hidden = true;
+        avatarEl.appendChild(img);
+      }
+    }
+
+    // =========================================================
+    // DYNAMIC GREETING
+    // Morning 05:00-11:59
+    // Afternoon 12:00-15:59
+    // Evening 16:00-18:59
+    // Night 19:00-04:59
+    // =========================================================
+
+    function updateGreeting() {
+      const hour = new Date().getHours();
+      const name = telegramUser ? getTelegramName(telegramUser) : "Student";
+
+      let greeting;
+      let sub;
+
+      if (hour >= 5 && hour < 12) {
+        greeting = "Good morning";
+        sub = "Have a great morning at university ✦";
+      } else if (hour >= 12 && hour < 16) {
+        greeting = "Good afternoon";
+        sub = "Hope your day is going well ✦";
+      } else if (hour >= 16 && hour < 19) {
+        greeting = "Good evening";
+        sub = "Enjoy your afternoon at university ✦";
+      } else {
+        greeting = "Good night";
+        sub = "Rest well and keep shining ✦";
+      }
+
+      document.getElementById("greeting").textContent =
+        `${greeting}, ${name}!`;
+
+      document.getElementById("greetingSub").textContent = sub;
+    }
+
+    setupTelegramProfile();
+    updateGreeting();
+
+    // =========================================================
+    // ATTENDANCE
+    // =========================================================
+
+    const classCard = document.getElementById("classCard");
+    const classToggle = document.getElementById("classToggle");
+    const confirmBtn = document.getElementById("confirmBtn");
+    const message = document.getElementById("message");
+
+    classToggle.addEventListener("click", () => {
+      classCard.classList.toggle("open");
+    });
+
+    confirmBtn.addEventListener("click", (event) => {
+      event.stopPropagation();
+
+      confirmBtn.textContent = "Confirmed";
+      confirmBtn.classList.add("confirmed");
+      confirmBtn.disabled = true;
+
+      message.textContent = "";
+    });
+
+    // =========================================================
+    // REQUEST ABSENCE BOTTOM SHEET
+    // =========================================================
+
+    const absenceBtn = document.getElementById("absenceBtn");
+    const absenceModal = document.getElementById("absenceModal");
+    const sessionSelect = document.getElementById("sessionSelect");
+    const sessionOptions = document.getElementById("sessionOptions");
+    const selectedSession = document.getElementById("selectedSession");
+    const absenceReason = document.getElementById("absenceReason");
+    const submitAbsence = document.getElementById("submitAbsence");
+    const absenceMessage = document.getElementById("absenceMessage");
+
+    function openAbsenceModal() {
+      absenceModal.classList.add("show");
+      absenceModal.setAttribute("aria-hidden", "false");
+      document.body.classList.add("modal-open");
+
+      if (tg?.HapticFeedback) {
+        tg.HapticFeedback.impactOccurred("light");
+      }
+    }
+
+    function closeAbsenceModal() {
+      absenceModal.classList.remove("show");
+      absenceModal.setAttribute("aria-hidden", "true");
+      document.body.classList.remove("modal-open");
+      sessionOptions.classList.remove("show");
+      sessionSelect.setAttribute("aria-expanded", "false");
+    }
+
+    absenceBtn.addEventListener("click", openAbsenceModal);
+
+    absenceModal.addEventListener("click", (event) => {
+      if (event.target === absenceModal) {
+        closeAbsenceModal();
+      }
+    });
+
+    sessionSelect.addEventListener("click", () => {
+      sessionOptions.classList.toggle("show");
+      sessionSelect.setAttribute(
+        "aria-expanded",
+        sessionOptions.classList.contains("show")
+      );
+    });
+
+    document.querySelectorAll(".session-option").forEach((option) => {
+      option.addEventListener("click", () => {
+        selectedSession.textContent = option.dataset.session;
+        selectedSession.classList.add("selected");
+
+        document.querySelectorAll(".session-option").forEach((item) => {
+          item.classList.remove("selected");
+        });
+
+        option.classList.add("selected");
+        sessionOptions.classList.remove("show");
+        sessionSelect.setAttribute("aria-expanded", "false");
+      });
+    });
+
+    submitAbsence.addEventListener("click", () => {
+      const session = selectedSession.textContent.trim();
+      const reason = absenceReason.value.trim();
+
+      if (session === "Select a session...") {
+        absenceMessage.textContent = "Please select a session first.";
+        return;
+      }
+
+      if (!reason) {
+        absenceMessage.textContent = "Please tell us why you will be absent.";
+        absenceReason.focus();
+        return;
+      }
+
+      absenceMessage.textContent = "Absence request submitted.";
+
+      if (tg?.HapticFeedback) {
+        tg.HapticFeedback.notificationOccurred("success");
+      }
+
+      // For a real backend, send `session`, `reason`, and Telegram
+      // `tg.initData` to your server here.
+      console.log({
+        telegramUser,
+        session,
+        reason,
+        telegramInitData: tg?.initData || null
+      });
+
+      setTimeout(closeAbsenceModal, 700);
+    });
+
+    // Telegram's Back button closes the bottom sheet when open.
+    if (tg?.BackButton) {
+      tg.BackButton.onClick(() => {
+        if (absenceModal.classList.contains("show")) {
+          closeAbsenceModal();
+          tg.BackButton.hide();
+        }
+      });
+    }
+  </script>
+</body>
+</html>
