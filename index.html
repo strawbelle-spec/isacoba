@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Universitas Sembagi Arutala</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <!-- DASHBOARD VIEW -->
+    <div id="dashboardView" class="view active-view">
+      <section class="hero">
+        <div class="cloud cloud-one"></div>
+        <div class="cloud cloud-two"></div>
+        <div class="cloud cloud-three"></div>
+        <div class="moon"><span class="moon-dot dot-one"></span><span class="moon-dot dot-two"></span><span class="moon-dot dot-three"></span></div>
+        <span class="star star-one">✦</span><span class="star star-two">✦</span><span class="star star-three">✦</span><span class="star star-four">✦</span>
+
+        <div class="brand">
+          <div class="logo">UA</div>
+          <div class="university-name">UNIVERSITAS<br>SEMBAGI ARUTALA</div>
+        </div>
+
+        <div class="hero-copy">
+          <h1 id="greeting">Good morning!</h1>
+          <p>Keep going for your dreams ✦</p>
+        </div>
+
+        <div class="campus">
+          <div class="flag-pole"></div><div class="flag"></div>
+          <div class="main-building"><div class="main-roof"></div><div class="side-window window-left"></div><div class="side-window window-right"></div><div class="building-columns"><span></span><span></span><span></span><span></span><span></span></div></div>
+          <div class="center-building"><div class="center-roof"></div><div class="center-window"></div><div class="door"></div></div>
+          <div class="tree tree-left"><div class="tree-top"></div><div class="tree-trunk"></div></div>
+          <div class="tree tree-right"><div class="tree-top"></div><div class="tree-trunk"></div></div>
+        </div>
+      </section>
+
+      <section class="profile-card">
+        <div class="avatar" id="avatar">👩🏻‍🎓</div>
+        <div class="profile-info">
+          <h2 id="userName">Nama sesuai user Telegram</h2>
+          <p>Jurusan</p>
+          <p>NIM <span class="generation">Generasi 1</span></p>
+        </div>
+      </section>
+
+      <main class="content">
+        <section class="section">
+          <h2 class="section-title">Upcoming class</h2>
+          <div class="class-card" id="classCard">
+            <button class="class-main" id="classToggle" type="button">
+              <span class="arrow" id="arrow">⌄</span>
+              <span class="class-title">Kecerdasan Artificial</span>
+              <span class="class-date">Senin, 5 Oktober 2026, 19.00 — Miss Isabelle</span>
+            </button>
+            <div class="attendance-row" id="attendanceRow">
+              <span class="attendance-label">Attendance open at</span>
+              <button class="confirm-button" id="confirmBtn" type="button">Confirm</button>
+            </div>
+          </div>
+
+          <button class="absence-card" id="absenceBtn" type="button">
+            <span>Request absence</span><span class="absence-arrow">›</span>
+          </button>
+        </section>
+
+        <section class="section assignment-section">
+          <h2 class="section-title">Assignment</h2>
+          <div class="assignment-card">
+            <div class="assignment-icon">▤</div>
+            <div class="assignment-info"><strong>UI/UX Design</strong><p>Latest assignment</p></div>
+            <div class="due">due 8 Oct<br>20.00</div>
+          </div>
+        </section>
+
+        <section class="stats-section">
+          <div class="stats-grid">
+            <div class="stat-card"><span class="stat-label">Attendance</span><strong class="stat-number">92%</strong><div class="progress"><span style="width:92%"></span></div></div>
+            <div class="stat-card"><span class="stat-label">Grade</span><strong class="stat-number">80</strong><div class="progress"><span style="width:80%"></span></div></div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <!-- CALENDAR VIEW -->
+    <div id="calendarView" class="view calendar-view" aria-hidden="true">
+      <header class="calendar-header">
+        <h1>Schedule</h1>
+      </header>
+
+      <section class="calendar-panel">
+        <div class="month-picker schedule-month">
+          <button id="prevMonth" type="button" aria-label="Previous month">‹</button>
+          <strong id="monthLabel">October 2026</strong>
+          <button class="add-event-button" id="addCalendarEvent" type="button" aria-label="Add event">+</button>
+        </div>
+
+        <section class="calendar-grid-wrap">
+          <div class="weekday-row"><span>MON</span><span>TUE</span><span>WED</span><span>THU</span><span>FRI</span><span>SAT</span><span>SUN</span></div>
+          <div class="calendar-grid" id="calendarGrid"></div>
+        </section>
+
+        <div class="calendar-legend">
+          <span><i class="legend-dot class-dot"></i>Class</span>
+          <span><i class="legend-dot event-dot"></i>Event</span>
+          <span><i class="legend-dot assignment-dot"></i>Assignment Due</span>
+          <span><i class="legend-dot personal-dot"></i>Personal</span>
+        </div>
+      </section>
+
+      <section class="reminder-card">
+        <div class="reminder-header">
+          <h2>Reminder</h2>
+          <button id="addReminder" type="button" aria-label="Add reminder">+</button>
+        </div>
+        <div class="reminder-list">
+          <article class="reminder-item">
+            <div class="reminder-icon cyan">▣</div>
+            <div class="reminder-info"><strong>Kecerdasan Artificial</strong><span>Class</span></div>
+            <time>07:00 pm</time>
+          </article>
+          <article class="reminder-item">
+            <div class="reminder-icon peach">▤</div>
+            <div class="reminder-info"><strong>UI/UX Design</strong><span>Assignment · Due 08:00 pm</span></div>
+            <time>08:00 pm</time>
+          </article>
+        </div>
+      </section>
+    </div>
+
+    <!-- ABSENCE BOTTOM SHEET -->
+    <div class="modal-backdrop" id="absenceModal" aria-hidden="true">
+      <section class="absence-sheet" role="dialog" aria-modal="true" aria-labelledby="absenceTitle">
+        <div class="sheet-handle"></div>
+        <button class="sheet-close" id="absenceClose" type="button" aria-label="Close">×</button>
+        <h2 id="absenceTitle">Request Absence</h2>
+        <label for="sessionSelect">Session</label>
+        <select id="sessionSelect"><option value="">Select a session...</option><option>Kecerdasan Artificial · 19:00</option><option>UI/UX Design · 13:00</option><option>Bahasa Inggris · 10:00</option></select>
+        <label for="absenceReason">Reason</label>
+        <textarea id="absenceReason" placeholder="Tell us why you will be absent..."></textarea>
+        <button class="submit-absence" id="submitAbsence" type="button">Submit</button>
+      </section>
+    </div>
+
+    <!-- BOTTOM NAV -->
+    <nav class="bottom-nav" aria-label="Main navigation">
+      <button class="nav-item active" id="homeNav" type="button"><span class="nav-icon">⌂</span><span>Home</span></button>
+      <button class="nav-item" id="calendarNav" type="button"><span class="nav-icon">▣</span><span>Calendar</span></button>
+    </nav>
+
+    <div class="toast" id="toast" aria-live="polite"></div>
+  </div>
+
+<script>
+  const dashboardView = document.getElementById('dashboardView');
+  const calendarView = document.getElementById('calendarView');
+  const homeNav = document.getElementById('homeNav');
+  const calendarNav = document.getElementById('calendarNav');
+  const classCard = document.getElementById('classCard');
+  const classToggle = document.getElementById('classToggle');
+  const confirmBtn = document.getElementById('confirmBtn');
+  const absenceBtn = document.getElementById('absenceBtn');
+  const absenceModal = document.getElementById('absenceModal');
+  const absenceClose = document.getElementById('absenceClose');
+  const submitAbsence = document.getElementById('submitAbsence');
+  const toast = document.getElementById('toast');
+  const calendarGrid = document.getElementById('calendarGrid');
+  const monthLabel = document.getElementById('monthLabel');
+  const selectedDateLabel = document.getElementById('selectedDateLabel');
+  const greeting = document.getElementById('greeting');
+
+  function showToast(text) {
+    toast.textContent = text;
+    toast.classList.add('show');
+    clearTimeout(window.__toastTimer);
+    window.__toastTimer = setTimeout(() => toast.classList.remove('show'), 1800);
+  }
+
+  function updateGreeting() {
+    const hour = new Date().getHours();
+    let word = 'Good night';
+    if (hour >= 5 && hour < 12) word = 'Good morning';
+    else if (hour >= 12 && hour < 16) word = 'Good afternoon';
+    else if (hour >= 16 && hour < 19) word = 'Good evening';
+    const name = document.getElementById('userName').textContent.split(' ')[0] || '';
+    greeting.textContent = name && !name.toLowerCase().includes('nama') ? `${word}, ${name}!` : `${word}!`;
+  }
+
+  function showView(view) {
+    const calendar = view === 'calendar';
+    dashboardView.classList.toggle('active-view', !calendar);
+    calendarView.classList.toggle('active-view', calendar);
+    calendarView.setAttribute('aria-hidden', String(!calendar));
+    homeNav.classList.toggle('active', !calendar);
+    calendarNav.classList.toggle('active', calendar);
+    window.scrollTo(0, 0);
+  }
+
+  homeNav.addEventListener('click', () => showView('home'));
+  calendarNav.addEventListener('click', () => showView('calendar'));
+  document.getElementById('calendarBack').addEventListener('click', () => showView('home'));
+
+  classToggle.addEventListener('click', () => classCard.classList.toggle('open'));
+  confirmBtn.addEventListener('click', (event) => {
+    event.stopPropagation();
+    confirmBtn.textContent = 'Confirmed';
+    confirmBtn.classList.add('confirmed');
+  });
+
+  function openAbsence() {
+    absenceModal.classList.add('show');
+    absenceModal.setAttribute('aria-hidden', 'false');
+  }
+  function closeAbsence() {
+    absenceModal.classList.remove('show');
+    absenceModal.setAttribute('aria-hidden', 'true');
+  }
+  absenceBtn.addEventListener('click', openAbsence);
+  absenceClose.addEventListener('click', closeAbsence);
+  absenceModal.addEventListener('click', e => { if (e.target === absenceModal) closeAbsence(); });
+  submitAbsence.addEventListener('click', () => { showToast('Absence request submitted'); closeAbsence(); });
+
+  let calendarDate = new Date(2026, 9, 5);
+  let selectedDay = 5;
+  const eventDays = new Set([2, 5, 8, 13, 19, 23, 27]);
+
+  function renderCalendar() {
+    const year = calendarDate.getFullYear();
+    const month = calendarDate.getMonth();
+    monthLabel.textContent = new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric' }).format(calendarDate);
+    calendarGrid.innerHTML = '';
+    const firstDay = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const prevDays = new Date(year, month, 0).getDate();
+
+    for (let i = 0; i < firstDay; i++) {
+      const cell = document.createElement('button'); cell.className = 'calendar-day muted'; cell.type = 'button'; cell.textContent = prevDays - firstDay + i + 1; cell.disabled = true; calendarGrid.appendChild(cell);
+    }
+    for (let day = 1; day <= daysInMonth; day++) {
+      const cell = document.createElement('button');
+      cell.type = 'button'; cell.className = 'calendar-day';
+      if (day === selectedDay && year === 2026 && month === 9) cell.classList.add('selected');
+      cell.innerHTML = `<span>${day}</span>${eventDays.has(day) ? '<i></i>' : ''}`;
+      cell.addEventListener('click', () => { selectedDay = day; renderCalendar(); updateSelectedLabel(); });
+      calendarGrid.appendChild(cell);
+    }
+    const total = Math.ceil(calendarGrid.children.length / 7) * 7;
+    for (let i = calendarGrid.children.length; i < total; i++) {
+      const cell = document.createElement('button'); cell.className = 'calendar-day muted'; cell.type = 'button'; cell.textContent = i - daysInMonth - firstDay + 1; cell.disabled = true; calendarGrid.appendChild(cell);
+    }
+    updateSelectedLabel();
+  }
+
+  function updateSelectedLabel() {
+    const date = new Date(calendarDate.getFullYear(), calendarDate.getMonth(), selectedDay);
+    selectedDateLabel.textContent = new Intl.DateTimeFormat('en-US', { weekday:'long', month:'long', day:'numeric' }).format(date);
+  }
+  document.getElementById('prevMonth').addEventListener('click', () => { calendarDate.setMonth(calendarDate.getMonth() - 1); selectedDay = 1; renderCalendar(); });
+  document.getElementById('nextMonth').addEventListener('click', () => { calendarDate.setMonth(calendarDate.getMonth() + 1); selectedDay = 1; renderCalendar(); });
+
+  // Telegram Mini App user data, when available.
+  try {
+    const tg = window.Telegram && window.Telegram.WebApp;
+    if (tg) {
+      tg.ready();
+      const user = tg.initDataUnsafe && tg.initDataUnsafe.user;
+      if (user) {
+        const fullName = [user.first_name, user.last_name].filter(Boolean).join(' ');
+        if (fullName) document.getElementById('userName').textContent = fullName;
+        if (user.photo_url) {
+          const avatar = document.getElementById('avatar');
+          avatar.innerHTML = `<img src="${user.photo_url}" alt="Profile photo">`;
+        }
+      }
+    }
+  } catch (_) {}
+
+  updateGreeting();
+  renderCalendar();
+</script>
+</body>
+</html>
