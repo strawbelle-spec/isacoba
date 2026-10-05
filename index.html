@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Universitas Sembagi Arutala</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div class="app">
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="cloud cloud-one"></div>
+      <div class="cloud cloud-two"></div>
+      <div class="cloud cloud-three"></div>
+
+      <div class="moon">
+        <span class="moon-dot dot-one"></span>
+        <span class="moon-dot dot-two"></span>
+        <span class="moon-dot dot-three"></span>
+      </div>
+
+      <span class="star star-one">✦</span>
+      <span class="star star-two">✦</span>
+      <span class="star star-three">✦</span>
+      <span class="star star-four">✦</span>
+
+      <!-- HEADER: no clover / notification icon -->
+      <div class="brand">
+        <div class="logo">UA</div>
+
+        <div class="university-name">
+          UNIVERSITAS<br>
+          SEMBAGI ARUTALA
+        </div>
+      </div>
+
+      <div class="hero-copy">
+        <h1>Good morning!</h1>
+        <p>Keep going for your dreams ✦</p>
+      </div>
+
+      <!-- Cute university illustration -->
+      <div class="campus">
+        <div class="flag-pole"></div>
+        <div class="flag"></div>
+
+        <div class="main-building">
+          <div class="main-roof"></div>
+
+          <div class="side-window window-left"></div>
+          <div class="side-window window-right"></div>
+
+          <div class="building-columns">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+        </div>
+
+        <div class="center-building">
+          <div class="center-roof"></div>
+          <div class="center-window"></div>
+          <div class="door"></div>
+        </div>
+
+        <div class="tree tree-left">
+          <div class="tree-top"></div>
+          <div class="tree-trunk"></div>
+        </div>
+
+        <div class="tree tree-right">
+          <div class="tree-top"></div>
+          <div class="tree-trunk"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROFILE -->
+    <section class="profile-card">
+      <div class="avatar">👩🏻‍🎓</div>
+
+      <div class="profile-info">
+        <h2>Nama sesuai user Telegram</h2>
+        <p>Jurusan</p>
+        <p>
+          NIM
+          <span class="generation">Generasi 1</span>
+        </p>
+      </div>
+    </section>
+
+    <main class="content">
+
+      <!-- UPCOMING CLASS -->
+      <section class="section">
+        <h2 class="section-title">Upcoming class</h2>
+
+        <div class="class-card" id="classCard">
+
+          <!-- Click this area to show/hide attendance -->
+          <button class="class-main" id="classToggle" type="button">
+            <span class="arrow" id="arrow">⌄</span>
+
+            <span class="class-title">
+              Kecerdasan Artificial
+            </span>
+
+            <span class="class-date">
+              Senin, 5 Oktober 2026, 19.00 — Miss Isabelle
+            </span>
+          </button>
+
+          <!-- Hidden until dropdown is opened -->
+          <div class="attendance-row" id="attendanceRow">
+            <span class="attendance-label">
+              Attendance open at
+            </span>
+
+            <button class="confirm-button" id="confirmBtn" type="button">
+              Confirm
+            </button>
+          </div>
+        </div>
+
+        <!-- Request absence: same width as class card -->
+        <button class="absence-card" id="absenceBtn" type="button">
+          <span>Request absence</span>
+          <span class="absence-arrow">›</span>
+        </button>
+      </section>
+
+      <!-- ASSIGNMENT -->
+      <section class="section assignment-section">
+        <h2 class="section-title">Assignment</h2>
+
+        <div class="assignment-card">
+          <div class="assignment-icon">▤</div>
+
+          <div class="assignment-info">
+            <strong>UI/UX Design</strong>
+            <p>Latest assignment</p>
+          </div>
+
+          <div class="due">
+            due 8 Oct<br>
+            20.00
+          </div>
+        </div>
+      </section>
+
+      <!-- STATS -->
+      <section class="stats-section">
+        <div class="stats-grid">
+
+          <div class="stat-card">
+            <span class="stat-label">Attendance</span>
+            <strong class="stat-number">92%</strong>
+
+            <div class="progress">
+              <span style="width: 92%"></span>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <span class="stat-label">Grade</span>
+            <strong class="stat-number">80</strong>
+
+            <div class="progress">
+              <span style="width: 80%"></span>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <div class="message" id="message" aria-live="polite"></div>
+    </main>
+  </div>
+
+  <script>
+    const classCard = document.getElementById("classCard");
+    const classToggle = document.getElementById("classToggle");
+    const confirmBtn = document.getElementById("confirmBtn");
+    const absenceBtn = document.getElementById("absenceBtn");
+    const message = document.getElementById("message");
+
+    // Attendance is hidden by default.
+    // Clicking the class/dropdown opens or closes it.
+    classToggle.addEventListener("click", () => {
+      classCard.classList.toggle("open");
+    });
+
+    // Confirm -> Confirmed, with NO checkmark.
+    confirmBtn.addEventListener("click", (event) => {
+      event.stopPropagation();
+
+      confirmBtn.textContent = "Confirmed";
+      confirmBtn.classList.add("confirmed");
+
+      message.textContent = "Attendance confirmed";
+    });
+
+    absenceBtn.addEventListener("click", () => {
+      message.textContent = "Request absence selected";
+    });
+  </script>
+</body>
+</html>
