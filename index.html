@@ -44,7 +44,7 @@
 
       <div class="hero-copy">
         <h1 id="greeting">Good morning, Student!</h1>
-        <p id="greetingSub">Have a great day at university ✦</p>
+        <p id="greetingSub">Have a great day at university!</p>
       </div>
 
       <!-- Cute university illustration -->
@@ -111,7 +111,7 @@
           </button>
 
           <div class="attendance-row" id="attendanceRow">
-            <span class="attendance-label">Attendance open at</span>
+            <span class="attendance-label">Attendance open at 18.45</span>
             <button class="confirm-button" id="confirmBtn" type="button">
               Confirm
             </button>
@@ -199,7 +199,7 @@
         <textarea
           id="absenceReason"
           class="reason-input"
-          placeholder="Tell us why you will be absent..."
+          placeholder="Got a reason to miss class?"
           rows="5"
         ></textarea>
 
@@ -288,16 +288,16 @@
 
       if (hour >= 5 && hour < 12) {
         greeting = "Good morning";
-        sub = "Have a great morning at university ✦";
+        sub = "Have a great morning at university!";
       } else if (hour >= 12 && hour < 16) {
         greeting = "Good afternoon";
-        sub = "Hope your day is going well ✦";
+        sub = "Hope your day is going well!";
       } else if (hour >= 16 && hour < 19) {
         greeting = "Good evening";
-        sub = "Enjoy your afternoon at university ✦";
+        sub = "Enjoy your afternoon at university.";
       } else {
         greeting = "Good night";
-        sub = "Rest well and keep shining ✦";
+        sub = "Rest well and keep shining.";
       }
 
       document.getElementById("greeting").textContent =
@@ -404,7 +404,7 @@
       }
 
       if (!reason) {
-        absenceMessage.textContent = "Please tell us why you will be absent.";
+        absenceMessage.textContent = "Got a reason to miss class?";
         absenceReason.focus();
         return;
       }
