@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#f8fbfd">
+  <title>Universitas Sembagi Arutala</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+  <!-- Calendar additions: dashboard CSS remains in style.css -->
+  <style>
+    /* Keep the entire dashboard scrollable above the fixed bottom navigation. */
+    html { min-height:100%; height:auto !important; overflow-x:hidden !important; overflow-y:auto !important; }
+    body { position:static !important; min-height:100%; height:auto !important; max-height:none !important; overflow-x:hidden !important; overflow-y:auto !important; padding-bottom:0 !important; touch-action:pan-y; }
+    .app { position:relative !important; min-height:100vh !important; height:auto !important; max-height:none !important; overflow:visible !important; padding-bottom:calc(92px + env(safe-area-inset-bottom, 0px)) !important; }
+    #dashboardPage, #calendarPage { position:relative !important; min-height:100vh !important; height:auto !important; max-height:none !important; overflow:visible !important; }
+    #dashboardPage .content, #dashboardPage main.content, #dashboardPage .stats-section { overflow:visible !important; max-height:none !important; }
+    #dashboardPage .stats-section { margin-bottom:8px !important; padding-bottom:0 !important; }
+    #dashboardPage .stats-grid { margin-bottom:20px !important; }
+    body.calendar-page .app { padding-bottom:calc(92px + env(safe-area-inset-bottom, 0px)) !important; }
+    .page { display:none; }
+    .page.active { display:block; }
+
+    .calendar-page-wrap {
+      min-height: 100vh;
+      background: #f8fbfd;
+      color: #18324a;
+      padding: 28px 18px 118px;
+    }
+
+    .calendar-header {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:18px;
+    }
+    .calendar-title {
+      margin:0;
+      font-size:32px;
+      font-weight:800;
+      letter-spacing:-1px;
+    }
+    .calendar-add {
+      width:52px;
+      height:52px;
+      border:0;
+      border-radius:17px;
+      background:#8db4d3;
+      color:white;
+      font-size:30px;
+      line-height:1;
+      cursor:pointer;
+      box-shadow:0 8px 20px rgba(86,126,158,.18);
+    }
+
+    .calendar-card {
+      background:#fff;
+      border-radius:28px;
+      overflow:hidden;
+      box-shadow:0 8px 25px rgba(46,79,103,.08);
+    }
+
+    .month-bar {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:14px 16px;
+      border-bottom:1px solid #edf2f5;
+    }
+    .month-name {
+      margin:0;
+      font-size:20px;
+      font-weight:800;
+      letter-spacing:-.4px;
+    }
+    .month-nav {
+      width:30px;
+      height:30px;
+      border:0;
+      background:transparent;
+      color:#54728b;
+      font-size:24px;
+      cursor:pointer;
+    }
+
+    .weekdays, .calendar-grid {
+      display:grid;
+      grid-template-columns:repeat(7,1fr);
+      text-align:center;
+    }
+    .weekdays {
+      padding:12px 10px 6px;
+      color:#71889a;
+      font-size:12px;
+      font-weight:800;
+      letter-spacing:.7px;
+    }
+    .calendar-grid {
+      padding:3px 10px 12px;
+      row-gap:3px;
+    }
+    .day-cell {
+      min-height:44px;
+      position:relative;
+      display:flex;
+      align-items:center;
+      justify-content:flex-start;
+      flex-direction:column;
+      padding-top:4px;
+      border:0;
+      background:transparent;
+      color:#29445a;
+      font-family:Inter,sans-serif;
+      font-size:13px;
+      font-weight:600;
+      cursor:pointer;
+      border-radius:12px;
+    }
+    .day-cell.muted { color:#b6c2cb; }
+    .day-cell.selected .day-number {
+      width:29px;
+      height:29px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      border-radius:50%;
+      background:#8db4d3;
+      color:#fff;
+    }
+    .day-number {
+      width:29px;
+      height:29px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .dots {
+      height:7px;
+      display:flex;
+      align-items:center;
+      gap:3px;
+      margin-top:2px;
+    }
+    .dot {
+      width:5px;
+      height:5px;
+      border-radius:50%;
+      display:block;
+    }
+    .dot.class-dot { background:#64a9d3; }
+    .dot.event-dot { background:#d99655; }
+    .dot.assignment-dot { background:#56a9a5; }
+    .dot.personal-dot { background:#8173b9; }
+
+    .calendar-legend {
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px 12px;
+      padding:12px 16px 15px;
+      border-top:1px solid #edf2f5;
+      color:#536d80;
+      font-size:12px;
+      font-weight:700;
+    }
+    .legend-item { display:flex; align-items:center; gap:7px; }
+
+    .reminder-section {
+      margin-top:18px;
+      background:#e3f0f8;
+      border-radius:27px;
+      padding:15px 13px 13px;
+      box-shadow:0 8px 25px rgba(46,79,103,.08);
+    }
+    .reminder-head {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:0 5px 13px;
+    }
+    .reminder-title {
+      margin:0;
+      font-size:19px;
+      font-weight:800;
+      color:#213a4d;
+    }
+    .reminder-add-small {
+      width:40px;
+      height:40px;
+      border:0;
+      border-radius:50%;
+      background:#fff;
+      color:#617e95;
+      font-size:25px;
+      cursor:pointer;
+    }
+    .reminder-list {
+      background:#293746;
+      border-radius:25px;
+      overflow:hidden;
+    }
+    .reminder-empty {
+      color:#dbe5ec;
+      padding:25px 20px;
+      text-align:center;
+      font-size:14px;
+    }
+    .reminder-item {
+      display:flex;
+      align-items:center;
+      gap:13px;
+      padding:17px 16px;
+      color:white;
+    }
+    .reminder-item + .reminder-item {
+      border-top:1px solid rgba(255,255,255,.09);
+    }
+    .reminder-info { min-width:0; flex:1; }
+    .reminder-name {
+      margin:0 0 4px;
+      font-size:15px;
+      font-weight:700;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .reminder-meta {
+      margin:0;
+      color:#c6d3dc;
+      font-size:12px;
+    }
+    .reminder-time {
+      font-size:13px;
+      font-weight:700;
+      color:#fff;
+      white-space:nowrap;
+    }
+    .reminder-delete {
+      flex:0 0 auto;
+      border:1px solid rgba(255,255,255,.24);
+      border-radius:10px;
+      background:rgba(255,255,255,.08);
+      color:#e6f0f7;
+      padding:7px 9px;
+      font:600 12px Inter, sans-serif;
+      cursor:pointer;
+    }
+    .reminder-delete:active { transform:scale(.97); }
+
+    .calendar-bottom-nav {
+      position:fixed;
+      z-index:50;
+      left:20px;
+      right:20px;
+      bottom:calc(12px + env(safe-area-inset-bottom, 0px));
+      height:70px;
+      background:#fff;
+      border:1px solid rgba(126,164,194,.12);
+      border-radius:26px;
+      box-shadow:0 9px 28px rgba(55,91,119,.15);
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      align-items:center;
+      padding:7px;
+      isolation:isolate;
+    }
+    .calendar-bottom-nav::before {
+      content:"";
+      position:absolute;
+      z-index:-1;
+      top:7px;
+      bottom:7px;
+      left:7px;
+      width:calc(50% - 7px);
+      border-radius:22px;
+      background:#e4f0f9;
+      box-shadow:inset 0 0 0 1px rgba(141,180,211,.10);
+      transform:translateX(0);
+      transition:transform .28s cubic-bezier(.2,.8,.2,1), background .2s ease;
+    }
+    .calendar-bottom-nav.calendar-selected::before { transform:translateX(100%); }
+    .nav-page-btn {
+      min-width:0;
+      height:100%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      border:0;
+      border-radius:22px;
+      background:transparent;
+      color:#8293a0;
+      font-family:Inter,sans-serif;
+      font-size:13px;
+      font-weight:650;
+      cursor:pointer;
+      -webkit-tap-highlight-color:transparent;
+      transition:color .2s ease, transform .2s ease;
+    }
+    .nav-page-btn:active { transform:scale(.97); }
+    .nav-page-btn.active { color:#3e7095; }
+    .nav-icon {
+      width:21px;
+      height:21px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      flex:0 0 21px;
+    }
+    .nav-icon svg { width:21px;height:21px;display:block; }
+    .nav-page-btn:not(.active) .nav-icon svg { opacity:.82; }
+    .chevron-icon { width:17px !important; height:17px !important; display:block !important; fill:none !important; stroke:#718895 !important; stroke-width:1.8 !important; stroke-linecap:round !important; stroke-linejoin:round !important; overflow:visible; }
+    .arrow { display:flex !important; align-items:center; justify-content:center; }
+    .arrow .chevron-icon { width:17px !important; height:17px !important; stroke-width:1.8 !important; transition:transform .22s ease; }
+    .class-card.open .arrow .chevron-down { transform:rotate(180deg); }
+    .absence-arrow { display:flex !important; align-items:center; justify-content:center; }
+    .absence-arrow .chevron-icon { width:18px !important; height:18px !important; stroke-width:1.9 !important; }
+    /* Fixed navigation must not cover the Attendance and Grade cards. */
+    .stats-section { margin-bottom: 8px; }
+    @media (max-width:480px) { .app { padding-bottom:calc(92px + env(safe-area-inset-bottom, 0px)) !important; } }
+    @media (max-width:360px) {
+      .calendar-bottom-nav { left:14px; right:14px; }
+      .nav-page-btn { gap:6px; font-size:12px; }
+    }
+
+    /* Personal reminder editor: event-creation layout inspired by the reference, in dashboard blue */
+    .reminder-modal{position:fixed;inset:0;z-index:100;display:none;align-items:stretch;justify-content:center;background:rgba(25,48,67,.30);backdrop-filter:blur(5px);}
+    .reminder-modal.show{display:flex;}
+    .reminder-sheet{width:min(100%,560px);height:100%;max-height:100dvh;box-sizing:border-box;overflow-y:auto;background:#f5faff;border-radius:0;padding:calc(16px + env(safe-area-inset-top,0px)) 18px calc(22px + env(safe-area-inset-bottom,0px));box-shadow:none;color:#29445a;}
+    .reminder-handle{display:none;}
+    .reminder-topbar{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;margin:0 0 24px;min-height:38px;}
+    .reminder-topbar h2{margin:0;font-size:21px;font-weight:700;color:#234660;text-align:center;}
+    .reminder-top-action{padding:6px 0;border:0;background:transparent;color:#6489a5;font:600 14px Inter,sans-serif;cursor:pointer;}
+    .reminder-top-action:last-child{text-align:right;color:#3477a8;}
+    .reminder-tabs{display:flex;padding:4px;background:#e5f0f8;border-radius:999px;gap:4px;margin-bottom:16px;}
+    .reminder-tab{flex:1;border:0;border-radius:999px;padding:11px 8px;background:transparent;color:#6c879c;font:600 14px Inter,sans-serif;}
+    .reminder-tab.active{background:#cfe5f5;color:#285d83;box-shadow:0 2px 8px rgba(65,113,149,.08);}
+    .reminder-panel{background:#fff;border:1px solid #e1edf5;border-radius:19px;padding:16px;margin-bottom:12px;box-shadow:0 4px 14px rgba(54,95,123,.04);}
+    .reminder-title-input{width:100%;min-height:145px;resize:vertical;border:0;outline:0;background:transparent;color:#234660;font:600 25px Inter,sans-serif;padding:3px 0;box-sizing:border-box;}
+    .reminder-title-input::placeholder{color:#9aafbf;}
+    .reminder-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-top:1px solid #e5edf3;font-size:14px;font-weight:600;color:#3c5e77;}
+    .reminder-row:first-child{border-top:0;}
+    .reminder-row .muted{font-weight:400;color:#7891a4;}
+    .reminder-row select,.reminder-row input[type=text]{max-width:62%;border:0;outline:0;background:transparent;color:#527994;text-align:right;font:500 14px Inter,sans-serif;}
+    .reminder-row input[type=date],.reminder-row input[type=time]{width:100%;min-width:0;box-sizing:border-box;border:1px solid #dce9f2;border-radius:10px;background:#f6faff;color:#315b78;padding:9px 7px;font:500 13px Inter,sans-serif;}
+    .reminder-date-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:8px 0 2px;}
+    .date-time-pickers{display:flex;flex-direction:column;gap:8px;}
+    .picker-chip-wrap{position:relative;min-width:0;}
+    .picker-chip{display:block;box-sizing:border-box;width:100%;padding:10px 11px;border-radius:999px;background:#e5f0f8;color:#315b78;font-size:13px;font-weight:600;white-space:nowrap;text-align:center;overflow:hidden;text-overflow:ellipsis;}
+    .time-chip-wrap .picker-chip{background:#f0f6fa;}
+    .native-picker{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;border:0;padding:0;margin:0;}
+    .reminder-tabs-single{display:block;padding:4px;}
+    .reminder-tabs-single .reminder-tab{display:block;width:100%;text-align:center;}
+    .reminder-date-col{min-width:0;}
+    .reminder-date-col + .reminder-date-col{border-left:1px solid #e1eaf1;padding-left:12px;}
+    .reminder-date-label{display:block;margin-bottom:7px;font-size:13px;color:#7891a4;font-weight:600;}
+    .reminder-date-col label{display:block;font-size:12px;color:#7891a4;margin:8px 0 4px;}
+    .reminder-switch{appearance:none;width:43px;height:25px;border-radius:99px;background:#cbd9e3;position:relative;flex:0 0 43px;margin:0;cursor:pointer;}
+    .reminder-switch:before{content:"";position:absolute;width:19px;height:19px;left:3px;top:3px;border-radius:50%;background:white;box-shadow:0 1px 4px #7290a555;transition:transform .18s;}
+    .reminder-switch:checked{background:#83b5d8;}.reminder-switch:checked:before{transform:translateX(18px);}
+    .reminder-section-label{font-size:13px;font-weight:700;color:#7290a5;margin:17px 4px 8px;}
+    .reminder-submit{width:100%;margin-top:10px;border:0;border-radius:15px;padding:15px;background:#8dbfe2;color:#fff;font:700 15px Inter,sans-serif;cursor:pointer;box-shadow:0 5px 12px rgba(82,143,185,.18);}
+    .reminder-submit:active{transform:scale(.99);}
+    @media(max-width:380px){.reminder-sheet{padding-left:13px;padding-right:13px}.reminder-panel{padding:13px}.reminder-title-input{min-height:120px;font-size:23px}.reminder-row{font-size:13px}.reminder-row select{font-size:12px}}
+    /* Last-resort mobile scroll override: content ends above the fixed nav. */
+    @media (max-width: 768px) {
+      html, body { overflow-y:auto !important; }
+      body { -webkit-overflow-scrolling:touch !important; }
+      .app, #dashboardPage, #dashboardPage .content { overflow-y:visible !important; }
+      #dashboardPage { padding-bottom:0 !important; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+
+    <!-- ================= DASHBOARD ================= -->
+    <div class="page active" id="dashboardPage">
+      <section class="hero">
+        <div class="cloud cloud-one"></div>
+        <div class="cloud cloud-two"></div>
+        <div class="cloud cloud-three"></div>
+
+        <div class="moon">
+          <span class="moon-dot dot-one"></span>
+          <span class="moon-dot dot-two"></span>
+          <span class="moon-dot dot-three"></span>
+        </div>
+
+        <span class="star star-one">✦</span>
+        <span class="star star-two">✦</span>
+        <span class="star star-three">✦</span>
+        <span class="star star-four">✦</span>
+
+        <div class="brand">
+          <div class="logo">UA</div>
+          <div class="university-name">
+            UNIVERSITAS<br>
+            SEMBAGI ARUTALA
+          </div>
+        </div>
+
+        <div class="hero-copy">
+          <h1 id="greeting">Good morning, Student!</h1>
+          <p id="greetingSub">Have a great day at university!</p>
+        </div>
+
+        <div class="campus">
+          <div class="flag-pole"></div>
+          <div class="flag"></div>
+          <div class="main-building">
+            <div class="main-roof"></div>
+            <div class="side-window window-left"></div>
+            <div class="side-window window-right"></div>
+            <div class="building-columns">
+              <span></span><span></span><span></span><span></span><span></span>
+            </div>
+          </div>
+          <div class="center-building">
+            <div class="center-roof"></div>
+            <div class="center-window"></div>
+            <div class="door"></div>
+          </div>
+          <div class="tree tree-left">
+            <div class="tree-top"></div>
+            <div class="tree-trunk"></div>
+          </div>
+          <div class="tree tree-right">
+            <div class="tree-top"></div>
+            <div class="tree-trunk"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="profile-card">
+        <div class="avatar" id="avatar">
+          <span id="avatarFallback">👩🏻‍🎓</span>
+        </div>
+        <div class="profile-info">
+          <h2 id="userName">Nama sesuai user Telegram</h2>
+          <p id="userMajor">Jurusan</p>
+          <p>
+            <span id="userNim">NIM</span>
+            <span class="generation">Generasi 1</span>
+          </p>
+        </div>
+      </section>
+
+      <main class="content">
+        <section class="section">
+          <h2 class="section-title">Upcoming class</h2>
+          <div class="class-card" id="classCard">
+            <button class="class-main" id="classToggle" type="button">
+              <span class="arrow" id="arrow" aria-hidden="true"><svg class="chevron-icon chevron-down" viewBox="0 0 24 24"><path d="M4.5 8 L12 15.5 L19.5 8"/></svg></span>
+              <span class="class-title">Kecerdasan Artificial</span>
+              <span class="class-date">Senin, 5 Oktober 2026, 19.00 — Miss Isabelle</span>
+            </button>
+            <div class="attendance-row" id="attendanceRow">
+              <span class="attendance-label">Attendance open at 18.45</span>
+              <button class="confirm-button" id="confirmBtn" type="button">Confirm</button>
+            </div>
+          </div>
+
+          <button class="absence-card" id="absenceBtn" type="button">
+            <span>Request absence</span>
+            <span class="absence-arrow" aria-hidden="true"><svg class="chevron-icon chevron-right" viewBox="0 0 24 24"><path d="M7 4.5 L14.5 12 L7 19.5"/></svg></span>
+          </button>
+        </section>
+
+        <section class="section assignment-section">
+          <h2 class="section-title">Assignment</h2>
+          <div class="assignment-card">
+            <div class="assignment-icon">▤</div>
+            <div class="assignment-info">
+              <strong>UI/UX Design</strong>
+              <p>Latest assignment</p>
+            </div>
+            <div class="due">due 8 Oct<br>20.00</div>
+          </div>
+        </section>
+
+        <section class="stats-section">
+          <div class="stats-grid">
+            <div class="stat-card">
+              <span class="stat-label">Attendance</span>
+              <strong class="stat-number">92%</strong>
+              <div class="progress"><span style="width:92%"></span></div>
+            </div>
+            <div class="stat-card">
+              <span class="stat-label">Grade</span>
+              <strong class="stat-number">80</strong>
+              <div class="progress"><span style="width:80%"></span></div>
+            </div>
+          </div>
+        </section>
+
+        <div class="message" id="message" aria-live="polite"></div>
+      </main>
+    </div>
+
+    <!-- ================= CALENDAR ================= -->
+    <div class="page" id="calendarPage">
+      <div class="calendar-page-wrap">
+        <div class="calendar-header">
+          <h1 class="calendar-title">Schedule</h1>
+        </div>
+
+        <div class="calendar-card">
+          <div class="month-bar">
+            <button class="month-nav" id="prevMonth" type="button">‹</button>
+            <h2 class="month-name" id="monthName">October 2026</h2>
+            <button class="month-nav" id="nextMonth" type="button">›</button>
+          </div>
+
+          <div class="weekdays">
+            <span>MON</span><span>TUE</span><span>WED</span>
+            <span>THU</span><span>FRI</span><span>SAT</span><span>SUN</span>
+          </div>
+
+          <div class="calendar-grid" id="calendarGrid"></div>
+
+          <div class="calendar-legend">
+            <span class="legend-item"><i class="dot class-dot"></i>Class</span>
+            <span class="legend-item"><i class="dot event-dot"></i>Event</span>
+            <span class="legend-item"><i class="dot assignment-dot"></i>Assignment Due</span>
+            <span class="legend-item"><i class="dot personal-dot"></i>Personal</span>
+          </div>
+        </div>
+
+        <section class="reminder-section">
+          <div class="reminder-head">
+            <h2 class="reminder-title">Reminder</h2>
+            <button class="reminder-add-small" id="openReminderBtn2" type="button">+</button>
+          </div>
+          <div class="reminder-list" id="reminderList"></div>
+        </section>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ================= BOTTOM NAV ================= -->
+  <nav class="calendar-bottom-nav" id="bottomNav" aria-label="Main navigation">
+    <button class="nav-page-btn active" id="dashboardNav" type="button" aria-current="page">
+      <span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m3 10 9-7 9 7"/><path d="M5.5 9v11h13V9"/><path d="M9.5 20v-6h5v6"/></svg></span><span>Dashboard</span>
+    </button>
+    <button class="nav-page-btn" id="calendarNav" type="button">
+      <span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="16" rx="3"/><path d="M7.5 3v4M16.5 3v4M3.5 9.5h17"/><path d="M8 13h.01M12 13h.01M16 13h.01M8 17h.01M12 17h.01"/></svg></span><span>Calendar</span>
+    </button>
+  </nav>
+
+  <!-- ================= REQUEST ABSENCE ================= -->
+  <div class="modal-backdrop" id="absenceModal" aria-hidden="true">
+    <div class="absence-sheet" role="dialog" aria-modal="true" aria-labelledby="absenceTitle">
+      <div class="sheet-handle"></div>
+      <div class="sheet-content">
+        <h2 id="absenceTitle">Request Absence</h2>
+
+        <label class="form-label" for="sessionSelect">Session</label>
+        <div class="session-select-wrap">
+          <button class="session-select" id="sessionSelect" type="button" aria-expanded="false">
+            <span id="selectedSession">Select a session...</span>
+            <span class="select-chevron">⌄</span>
+          </button>
+
+          <div class="session-options" id="sessionOptions">
+            <button class="session-option" type="button" data-session="Kecerdasan Artificial · 19:00">
+              <span>Kecerdasan Artificial · 19:00</span><span class="radio"></span>
+            </button>
+            <button class="session-option" type="button" data-session="UI/UX Design · 13:00">
+              <span>UI/UX Design · 13:00</span><span class="radio"></span>
+            </button>
+            <button class="session-option" type="button" data-session="Bahasa Inggris · 10:00">
+              <span>Bahasa Inggris · 10:00</span><span class="radio"></span>
+            </button>
+          </div>
+        </div>
+
+        <label class="form-label reason-label" for="absenceReason">Reason</label>
+        <textarea id="absenceReason" class="reason-input" placeholder="Got a reason to miss class?" rows="5"></textarea>
+
+        <div class="sheet-actions">
+          <button class="submit-absence" id="submitAbsence" type="button">Submit</button>
+        </div>
+        <p class="form-message" id="absenceMessage"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= PERSONAL REMINDER ================= -->
+  <div class="reminder-modal" id="reminderModal" aria-hidden="true">
+    <div class="reminder-sheet" role="dialog" aria-modal="true" aria-label="Add personal reminder">
+      <div class="reminder-topbar">
+        <button class="reminder-top-action" id="cancelReminderBtn" type="button">Cancel</button>
+        <h2>New</h2>
+        <button class="reminder-top-action" id="doneReminderBtn" type="button">Done</button>
+      </div>
+      <div class="reminder-tabs reminder-tabs-single" aria-label="Reminder type">
+        <div class="reminder-tab active">Events</div>
+      </div>
+      <div class="reminder-panel">
+        <input class="reminder-title-input" id="reminderTitleInput" type="text" placeholder="Title" aria-label="Title" maxlength="100">
+        <div class="reminder-row"><span>Category</span><select id="reminderCategory"><option>Personal</option><option>Study</option><option>Appointment</option><option>Other</option></select></div>
+      </div>
+      <div class="reminder-panel">
+        <div class="reminder-row"><span>All day</span><input class="reminder-switch" id="reminderAllDay" type="checkbox" aria-label="All day"></div>
+        <div class="reminder-date-grid">
+          <div class="reminder-date-col">
+            <span class="reminder-date-label">Start</span>
+            <div class="date-time-pickers">
+              <div class="picker-chip-wrap"><span class="picker-chip" id="startDateLabel">Select date</span><input class="native-picker" id="reminderDateInput" type="date" aria-label="Start date"></div>
+              <div class="picker-chip-wrap time-chip-wrap"><span class="picker-chip" id="startTimeLabel">9:00 AM</span><input class="native-picker" id="reminderTimeInput" type="time" value="09:00" aria-label="Start time"></div>
+            </div>
+          </div>
+          <div class="reminder-date-col">
+            <span class="reminder-date-label">End</span>
+            <div class="date-time-pickers">
+              <div class="picker-chip-wrap"><span class="picker-chip" id="endDateLabel">Select date</span><input class="native-picker" id="reminderEndDate" type="date" aria-label="End date"></div>
+              <div class="picker-chip-wrap time-chip-wrap"><span class="picker-chip" id="endTimeLabel">10:00 AM</span><input class="native-picker" id="reminderEndTime" type="time" value="10:00" aria-label="End time"></div>
+            </div>
+          </div>
+        </div>
+        <div class="reminder-row"><span>Time zone</span><span class="muted">GMT+07:00 · WIB</span></div>
+      </div>
+      <div class="reminder-section-label">More settings</div>
+      <div class="reminder-panel">
+        <div class="reminder-row"><span>Repeat</span><select id="reminderRepeat"><option>Once</option><option>Every day</option><option>Every week</option><option>Every month</option></select></div>
+      </div>
+      <div class="reminder-panel">
+        <div class="reminder-row"><span>Reminder</span><select id="reminderAlert"><option value="0">At time of event</option><option value="5">5 minutes before</option><option value="15" selected>15 minutes before</option><option value="30">30 minutes before</option><option value="60">1 hour before</option><option value="1440">1 day before</option><option value="none">None</option></select></div>
+        <div class="reminder-row"><span>Sound alert</span><input class="reminder-switch" id="reminderSound" type="checkbox" aria-label="Sound alert"></div>
+      </div>
+      <div class="reminder-panel"><div class="reminder-row"><span>Location</span><input id="reminderLocation" type="text" placeholder="Add location"></div></div>
+      <button class="reminder-submit" id="saveReminderBtn" type="button">Save Reminder</button>
+    </div>
+  </div>
+
+  <script>
+    // =========================================================
+    // TELEGRAM MINI APP USER
+    // =========================================================
+    const tg = window.Telegram?.WebApp;
+
+    if (tg) {
+      tg.ready();
+      tg.expand();
+      tg.setHeaderColor("#171717");
+      tg.setBackgroundColor("#f8fbfd");
+    }
+
+    const telegramUser = tg?.initDataUnsafe?.user || null;
+
+    function getTelegramName(user) {
+      if (!user) return "Student";
+      const fullName = [user.first_name || "", user.last_name || ""].join(" ").trim();
+      return fullName || user.username || "Student";
+    }
+
+    function setupTelegramProfile() {
+      const nameEl = document.getElementById("userName");
+      const avatarEl = document.getElementById("avatar");
+      const fallbackEl = document.getElementById("avatarFallback");
+
+      if (!telegramUser) {
+        nameEl.textContent = "Nama sesuai user Telegram";
+        return;
+      }
+
+      nameEl.textContent = getTelegramName(telegramUser);
+
+      if (telegramUser.photo_url) {
+        const img = document.createElement("img");
+        img.src = telegramUser.photo_url;
+        img.alt = getTelegramName(telegramUser);
+        img.className = "telegram-avatar";
+        img.onerror = () => {
+          img.remove();
+          fallbackEl.hidden = false;
+        };
+        fallbackEl.hidden = true;
+        avatarEl.appendChild(img);
+      }
+    }
+
+    // =========================================================
+    // DYNAMIC GREETING
+    // =========================================================
+    function updateGreeting() {
+      const hour = new Date().getHours();
+      const name = telegramUser ? getTelegramName(telegramUser) : "Student";
+
+      let greeting, sub;
+
+      if (hour >= 5 && hour < 12) {
+        greeting = "Good morning";
+        sub = "Have a great morning at university!";
+      } else if (hour >= 12 && hour < 16) {
+        greeting = "Good afternoon";
+        sub = "Hope your day is going well!";
+      } else if (hour >= 16 && hour < 19) {
+        greeting = "Good evening";
+        sub = "Enjoy your afternoon at university.";
+      } else {
+        greeting = "Good night";
+        sub = "Rest well and keep shining.";
+      }
+
+      document.getElementById("greeting").textContent = `${greeting}, ${name}!`;
+      document.getElementById("greetingSub").textContent = sub;
+    }
+
+    setupTelegramProfile();
+    updateGreeting();
+
+    // =========================================================
+    // PAGE NAVIGATION
+    // =========================================================
+    const dashboardPage = document.getElementById("dashboardPage");
+    const calendarPage = document.getElementById("calendarPage");
+    const dashboardNav = document.getElementById("dashboardNav");
+    const calendarNav = document.getElementById("calendarNav");
+    const bottomNav = document.getElementById("bottomNav");
+
+    function showPage(page) {
+      const calendarIsOpen = page === "calendar";
+      dashboardPage.classList.toggle("active", !calendarIsOpen);
+      calendarPage.classList.toggle("active", calendarIsOpen);
+
+      dashboardNav.classList.toggle("active", !calendarIsOpen);
+      calendarNav.classList.toggle("active", calendarIsOpen);
+      bottomNav.classList.toggle("calendar-selected", calendarIsOpen);
+      dashboardNav.toggleAttribute("aria-current", !calendarIsOpen);
+      calendarNav.toggleAttribute("aria-current", calendarIsOpen);
+      if (!calendarIsOpen) dashboardNav.setAttribute("aria-current", "page");
+      else calendarNav.setAttribute("aria-current", "page");
+
+      document.body.classList.toggle("calendar-page", calendarIsOpen);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    dashboardNav.addEventListener("click", () => showPage("dashboard"));
+    calendarNav.addEventListener("click", () => showPage("calendar"));
+
+    // =========================================================
+    // ATTENDANCE
+    // =========================================================
+    const classCard = document.getElementById("classCard");
+    const classToggle = document.getElementById("classToggle");
+    const confirmBtn = document.getElementById("confirmBtn");
+
+    classToggle.addEventListener("click", () => {
+      classCard.classList.toggle("open");
+    });
+
+    confirmBtn.addEventListener("click", (event) => {
+      event.stopPropagation();
+      confirmBtn.textContent = "Confirmed";
+      confirmBtn.classList.add("confirmed");
+      confirmBtn.disabled = true;
+    });
+
+    // =========================================================
+    // REQUEST ABSENCE
+    // =========================================================
+    const absenceBtn = document.getElementById("absenceBtn");
+    const absenceModal = document.getElementById("absenceModal");
+    const sessionSelect = document.getElementById("sessionSelect");
+    const sessionOptions = document.getElementById("sessionOptions");
+    const selectedSession = document.getElementById("selectedSession");
+    const absenceReason = document.getElementById("absenceReason");
+    const submitAbsence = document.getElementById("submitAbsence");
+    const absenceMessage = document.getElementById("absenceMessage");
+
+    function openAbsenceModal() {
+      absenceModal.classList.add("show");
+      absenceModal.setAttribute("aria-hidden", "false");
+      document.body.classList.add("modal-open");
+      if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred("light");
+    }
+
+    function closeAbsenceModal() {
+      absenceModal.classList.remove("show");
+      absenceModal.setAttribute("aria-hidden", "true");
+      document.body.classList.remove("modal-open");
+      sessionOptions.classList.remove("show");
+      sessionSelect.setAttribute("aria-expanded", "false");
+    }
+
+    absenceBtn.addEventListener("click", openAbsenceModal);
+
+    absenceModal.addEventListener("click", (event) => {
+      if (event.target === absenceModal) closeAbsenceModal();
+    });
+
+    sessionSelect.addEventListener("click", () => {
+      sessionOptions.classList.toggle("show");
+      sessionSelect.setAttribute("aria-expanded", sessionOptions.classList.contains("show"));
+    });
+
+    document.querySelectorAll(".session-option").forEach((option) => {
+      option.addEventListener("click", () => {
+        selectedSession.textContent = option.dataset.session;
+        selectedSession.classList.add("selected");
+
+        document.querySelectorAll(".session-option").forEach((item) => {
+          item.classList.remove("selected");
+        });
+
+        option.classList.add("selected");
+        sessionOptions.classList.remove("show");
+        sessionSelect.setAttribute("aria-expanded", "false");
+      });
+    });
+
+    submitAbsence.addEventListener("click", () => {
+      const session = selectedSession.textContent.trim();
+      const reason = absenceReason.value.trim();
+
+      if (session === "Select a session...") {
+        absenceMessage.textContent = "Please select a session first.";
+        return;
+      }
+
+      if (!reason) {
+        absenceMessage.textContent = "Got a reason to miss class?";
+        absenceReason.focus();
+        return;
+      }
+
+      absenceMessage.textContent = "Absence request submitted.";
+
+      if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred("success");
+
+      console.log({
+        telegramUser,
+        session,
+        reason,
+        telegramInitData: tg?.initData || null
+      });
+
+      setTimeout(closeAbsenceModal, 700);
+    });
+
+    // =========================================================
+    // CALENDAR
+    // =========================================================
+    const monthName = document.getElementById("monthName");
+    const calendarGrid = document.getElementById("calendarGrid");
+    const prevMonth = document.getElementById("prevMonth");
+    const nextMonth = document.getElementById("nextMonth");
+
+    let calendarDate = new Date(2026, 9, 1);
+    let selectedDateKey = "2026-10-05";
+
+    // Existing university schedule/events.
+    const fixedCalendarItems = {
+      "2026-10-01": [{ type: "class", title: "Kecerdasan Artificial", time: "19:00" }],
+      "2026-10-02": [{ type: "class", title: "UI/UX Design", time: "13:00" }],
+      "2026-10-04": [{ type: "assignment", title: "UI/UX Design", time: "20:00" }],
+      "2026-10-05": [{ type: "class", title: "Kecerdasan Artificial", time: "19:00" }],
+      "2026-10-08": [{ type: "assignment", title: "UI/UX Design", time: "20:00" }],
+      "2026-10-09": [{ type: "event", title: "University Event", time: "10:00" }],
+      "2026-10-12": [{ type: "event", title: "Class Event", time: "10:00" }],
+      "2026-10-13": [{ type: "event", title: "Campus Event", time: "13:00" }],
+      "2026-10-14": [{ type: "event", title: "Study Session", time: "15:00" }],
+      "2026-10-15": [{ type: "event", title: "University Event", time: "10:00" }],
+      "2026-10-16": [{ type: "event", title: "University Event", time: "10:00" }]
+    };
+
+    function dateKey(date) {
+      const y = date.getFullYear();
+      const m = String(date.getMonth() + 1).padStart(2, "0");
+      const d = String(date.getDate()).padStart(2, "0");
+      return `${y}-${m}-${d}`;
+    }
+
+    // Personal reminders are separated by Telegram account on this device.
+    // University events above remain fixed and are never edited by student actions.
+    const personalReminderStorageKey = `ua_personal_reminders_${telegramUser?.id || "guest"}`;
+
+    function getPersonalReminders() {
+      try {
+        return JSON.parse(localStorage.getItem(personalReminderStorageKey) || "[]");
+      } catch {
+        return [];
+      }
+    }
+
+    function savePersonalReminders(items) {
+      localStorage.setItem(personalReminderStorageKey, JSON.stringify(items));
+    }
+
+    function getItemsForDate(key) {
+      const items = [...(fixedCalendarItems[key] || [])];
+      getPersonalReminders()
+        .filter(item => item.date === key)
+        .forEach(item => items.push({
+          type: "personal",
+          id: item.id,
+          title: item.title,
+          time: item.time || ""
+        }));
+      return items;
+    }
+
+    function renderCalendar() {
+      const year = calendarDate.getFullYear();
+      const month = calendarDate.getMonth();
+
+      monthName.textContent = calendarDate.toLocaleDateString("en-US", {
+        month: "long",
+        year: "numeric"
+      });
+
+      calendarGrid.innerHTML = "";
+
+      // Monday-first calendar.
+      const firstDay = new Date(year, month, 1);
+      const firstMondayIndex = (firstDay.getDay() + 6) % 7;
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const previousDays = new Date(year, month, 0).getDate();
+
+      for (let i = 0; i < 42; i++) {
+        const cell = document.createElement("button");
+        cell.type = "button";
+        cell.className = "day-cell";
+
+        let day;
+        let cellDate;
+
+        if (i < firstMondayIndex) {
+          day = previousDays - firstMondayIndex + i + 1;
+          cellDate = new Date(year, month - 1, day);
+          cell.classList.add("muted");
+        } else if (i >= firstMondayIndex + daysInMonth) {
+          day = i - firstMondayIndex - daysInMonth + 1;
+          cellDate = new Date(year, month + 1, day);
+          cell.classList.add("muted");
+        } else {
+          day = i - firstMondayIndex + 1;
+          cellDate = new Date(year, month, day);
+        }
+
+        const key = dateKey(cellDate);
+        if (key === selectedDateKey) cell.classList.add("selected");
+
+        const number = document.createElement("span");
+        number.className = "day-number";
+        number.textContent = day;
+        cell.appendChild(number);
+
+        const dots = document.createElement("span");
+        dots.className = "dots";
+
+        const types = [...new Set(getItemsForDate(key).map(item => item.type))];
+        types.slice(0, 3).forEach(type => {
+          const dot = document.createElement("i");
+          dot.className = `dot ${type}-dot`;
+          dots.appendChild(dot);
+        });
+
+        cell.appendChild(dots);
+
+        cell.addEventListener("click", () => {
+          selectedDateKey = key;
+          renderCalendar();
+          renderReminders();
+        });
+
+        calendarGrid.appendChild(cell);
+      }
+
+      renderReminders();
+    }
+
+    function moveMonth(offset) {
+      calendarDate = new Date(calendarDate.getFullYear(), calendarDate.getMonth() + offset, 1);
+      // Keep the selected day number where possible when moving between months.
+      const oldDay = Number(selectedDateKey.slice(-2));
+      const maxDay = new Date(calendarDate.getFullYear(), calendarDate.getMonth() + 1, 0).getDate();
+      selectedDateKey = dateKey(new Date(calendarDate.getFullYear(), calendarDate.getMonth(), Math.min(oldDay, maxDay)));
+      renderCalendar();
+    }
+
+    prevMonth.addEventListener("click", () => moveMonth(-1));
+    nextMonth.addEventListener("click", () => moveMonth(1));
+
+    // Swipe left/right across the calendar to move between months on mobile.
+    const swipeTarget = document.querySelector(".calendar-card");
+    let swipeStartX = null;
+    swipeTarget.addEventListener("touchstart", (event) => {
+      swipeStartX = event.changedTouches[0].clientX;
+    }, { passive: true });
+    swipeTarget.addEventListener("touchend", (event) => {
+      if (swipeStartX === null) return;
+      const deltaX = event.changedTouches[0].clientX - swipeStartX;
+      if (Math.abs(deltaX) > 65) moveMonth(deltaX < 0 ? 1 : -1);
+      swipeStartX = null;
+    }, { passive: true });
+
+    function renderReminders() {
+      const reminderList = document.getElementById("reminderList");
+      const items = getItemsForDate(selectedDateKey);
+
+      if (!items.length) {
+        reminderList.innerHTML = `<div class="reminder-empty">No reminders for this date.</div>`;
+        return;
+      }
+
+      reminderList.innerHTML = items.map(item => `
+        <div class="reminder-item">
+          <div class="reminder-info">
+            <p class="reminder-name">${escapeHtml(item.title)}</p>
+            <p class="reminder-meta">${item.type === "personal" ? "Personal reminder · only you" : `${capitalize(item.type)} · University schedule`}</p>
+          </div>
+          <div class="reminder-time">${escapeHtml(item.time || "")}</div>
+          ${item.type === "personal" ? `<button class="reminder-delete" type="button" data-delete-reminder="${escapeHtml(item.id)}" aria-label="Delete personal reminder">Delete</button>` : ""}
+        </div>
+      `).join("");
+    }
+
+    // Only personal reminders get a delete control. Fixed university schedule items
+    // never receive a delete button and are not stored in the personal-reminder list.
+    document.getElementById("reminderList").addEventListener("click", (event) => {
+      const deleteButton = event.target.closest("[data-delete-reminder]");
+      if (!deleteButton) return;
+
+      const reminderId = Number(deleteButton.dataset.deleteReminder);
+      const reminders = getPersonalReminders();
+      const target = reminders.find(item => Number(item.id) === reminderId);
+      if (!target) return;
+
+      const updated = reminders.filter(item => Number(item.id) !== reminderId);
+      savePersonalReminders(updated);
+      renderCalendar();
+      if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred("success");
+    });
+
+    function capitalize(text) {
+      return text.charAt(0).toUpperCase() + text.slice(1);
+    }
+
+    function escapeHtml(text) {
+      return String(text)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    // =========================================================
+    // PERSONAL REMINDER MODAL
+    // =========================================================
+    const reminderModal = document.getElementById("reminderModal");
+    const reminderTitleInput = document.getElementById("reminderTitleInput");
+    const reminderDateInput = document.getElementById("reminderDateInput");
+    const reminderTimeInput = document.getElementById("reminderTimeInput");
+    const saveReminderBtn = document.getElementById("saveReminderBtn");
+
+    function formatPickerDate(value) {
+      if (!value) return "Select date";
+      const date = new Date(`${value}T12:00:00`);
+      return date.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+    }
+    function formatPickerTime(value) {
+      if (!value) return "Select time";
+      const [hours, minutes] = value.split(":").map(Number);
+      const suffix = hours >= 12 ? "PM" : "AM";
+      const hour12 = hours % 12 || 12;
+      return `${hour12}:${String(minutes).padStart(2, "0")} ${suffix}`;
+    }
+    function syncReminderPickerLabels() {
+      document.getElementById("startDateLabel").textContent = formatPickerDate(reminderDateInput.value);
+      document.getElementById("endDateLabel").textContent = formatPickerDate(document.getElementById("reminderEndDate").value);
+      document.getElementById("startTimeLabel").textContent = formatPickerTime(reminderTimeInput.value);
+      document.getElementById("endTimeLabel").textContent = formatPickerTime(document.getElementById("reminderEndTime").value);
+    }
+    [reminderDateInput, reminderTimeInput, document.getElementById("reminderEndDate"), document.getElementById("reminderEndTime")].forEach(input => {
+      input.addEventListener("change", syncReminderPickerLabels);
+    });
+
+    function openReminderModal() {
+      reminderModal.classList.add("show");
+      reminderModal.setAttribute("aria-hidden", "false");
+
+      reminderDateInput.value = selectedDateKey;
+      document.getElementById("reminderEndDate").value = selectedDateKey;
+      reminderTimeInput.value = "09:00";
+      document.getElementById("reminderEndTime").value = "10:00";
+      document.getElementById("reminderAllDay").checked = false;
+      syncReminderPickerLabels();
+      reminderTitleInput.value = "";
+      if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred("light");
+    }
+
+    function closeReminderModal() {
+      reminderModal.classList.remove("show");
+      reminderModal.setAttribute("aria-hidden", "true");
+    }
+
+    document.getElementById("openReminderBtn2").addEventListener("click", openReminderModal);
+    document.getElementById("cancelReminderBtn").addEventListener("click", closeReminderModal);
+    document.getElementById("doneReminderBtn").addEventListener("click", () => saveReminderBtn.click());
+    reminderModal.addEventListener("click", (event) => {
+      if (event.target === reminderModal) closeReminderModal();
+    });
+
+    document.getElementById("reminderAllDay").addEventListener("change", (event) => {
+      reminderTimeInput.disabled = event.target.checked;
+      document.getElementById("reminderEndTime").disabled = event.target.checked;
+      reminderTimeInput.style.opacity = event.target.checked ? ".45" : "1";
+      document.getElementById("reminderEndTime").style.opacity = event.target.checked ? ".45" : "1";
+      document.getElementById("startTimeLabel").style.opacity = event.target.checked ? ".45" : "1";
+      document.getElementById("endTimeLabel").style.opacity = event.target.checked ? ".45" : "1";
+    });
+
+    saveReminderBtn.addEventListener("click", () => {
+      const title = reminderTitleInput.value.trim();
+      const date = reminderDateInput.value;
+      const time = document.getElementById("reminderAllDay").checked ? "All day" : reminderTimeInput.value;
+      const endDate = document.getElementById("reminderEndDate").value || date;
+      const endTime = document.getElementById("reminderAllDay").checked ? "All day" : document.getElementById("reminderEndTime").value;
+
+      if (!title || !date) {
+        reminderTitleInput.focus();
+        return;
+      }
+
+      const reminders = getPersonalReminders();
+      reminders.push({
+        id: Date.now(),
+        title,
+        date,
+        time,
+        endDate,
+        endTime,
+        category: document.getElementById("reminderCategory").value,
+        allDay: document.getElementById("reminderAllDay").checked,
+        repeat: document.getElementById("reminderRepeat").value,
+        alert: document.getElementById("reminderAlert").value,
+        sound: document.getElementById("reminderSound").checked,
+        location: document.getElementById("reminderLocation").value.trim(),
+        kind: "event",
+        createdBy: telegramUser ? getTelegramName(telegramUser) : "Student"
+      });
+
+      savePersonalReminders(reminders);
+
+      selectedDateKey = date;
+      calendarDate = new Date(`${date}T12:00:00`);
+
+      reminderTitleInput.value = "";
+      reminderTimeInput.value = "09:00";
+      document.getElementById("reminderEndTime").value = "10:00";
+      document.getElementById("reminderLocation").value = "";
+      document.getElementById("reminderAllDay").checked = false;
+      syncReminderPickerLabels();
+
+      closeReminderModal();
+      renderCalendar();
+
+      if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred("success");
+    });
+
+    // Initial calendar.
+    syncReminderPickerLabels();
+    renderCalendar();
+
+    // Telegram Back button.
+    if (tg?.BackButton) {
+      tg.BackButton.onClick(() => {
+        if (absenceModal.classList.contains("show")) {
+          closeAbsenceModal();
+          tg.BackButton.hide();
+        } else if (reminderModal.classList.contains("show")) {
+          closeReminderModal();
+          tg.BackButton.hide();
+        }
+      });
+    }
+  </script>
+</body>
+</html>
